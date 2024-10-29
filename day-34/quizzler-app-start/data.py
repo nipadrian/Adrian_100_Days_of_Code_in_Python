@@ -11,8 +11,8 @@ data = response.json()
 
 question_data = data["results"]
 
-print(question_data[0]["question"])
-print(question_data[0]["correct_answer"])
+# print(question_data[0]["question"])
+# print(question_data[0]["correct_answer"])
 
 
 
