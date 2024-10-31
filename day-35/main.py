@@ -1,5 +1,11 @@
 import requests
+from twilio.rest import Client
+
 api_key = ""
+account_sid = ""
+auth_token = ""
+
+
 
 twilio_code = ""
 
@@ -24,7 +30,20 @@ for increment in range(0,4):
     if condition_code < 700:
         will_rain = True
 if will_rain:
-    print("Bring an umbrella.")
+    client = Client(account_sid, auth_token)
+    # message = client.messages \
+    #     .create(
+    #         body="It's going to rain today. Remember to bring an umbrella",
+    #         from_="+18447798275",
+    #         to="+18328580221"
+    #     )
+
+    message = client.messages.create(
+        from_= "whatsapp:",
+        body = "It's going to rain today. Remember to bring an umbrella.",
+        to = "whatsapp:"
+    )
+    print(message.status)
 
 
 
