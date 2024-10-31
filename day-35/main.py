@@ -1,7 +1,7 @@
 import requests
-api_key = "da99c8fdc9dfc83a2974f62177c64a42"
+api_key = ""
 
-twilio_code = "2176BE5SNSHKHX8KG8KR7KWG"
+twilio_code = ""
 
 parameters = {
     "lat": "29.760427",
