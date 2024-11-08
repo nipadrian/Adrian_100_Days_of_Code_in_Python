@@ -1,18 +1,57 @@
 import requests
 from datetime import datetime
 from pprint import pprint
+import os
+from requests.auth import HTTPBasicAuth
+from dotenv import load_dotenv
 
-sheety_domain = "https://api.sheety.co/561665c6db0847b0f34c1293296bac10/flightDeals/prices"
-sheety_key = "Basic bnVsbDpudWxs"
+load_dotenv()
 
-sheety_headers = {
-    "Authorization": sheety_key
-}
+SHEETY_DOMAIN = "https://api.sheety.co/561665c6db0847b0f34c1293296bac10/flightDeals/prices"
+
+
+
 
 class DataManager:
     #This class is responsible for talking to the Google Sheet.
-    sheety_get = requests.get(url = sheety_domain, headers = sheety_headers)
-    #pprint(sheety_get.text)
-    prices = sheety_get.text
-    print(prices)
-    print(prices["prices"])
+    # SHEETY_HEADERS = {
+    #     "Authorization": SHEETY_KEY
+    # }
+    SHEETY_KEY = os.environ["SHEETY_KEY"]
+    SHEETY_HEADERS = {
+        "Authorization": os.environ["SHEETY_KEY"]
+    }
+
+    def __init__(self):
+        self._user = os.environ["SHEETY_USERNAME"]
+        #self._user = SHEETY_USERNAME
+        #self._password = SHEETY_KEY
+        #self.authorization = (self._user, self._password)
+        self._password = os.environ["SHEETY_KEY"]
+        self.authorization = HTTPBasicAuth(self._user,self._password)
+        self.destination_data = {}
+        SHEETY_HEADERS = {
+            "Authorization": self._password
+        }
+    def get_destination_data(self):
+        response = requests.get(url = SHEETY_DOMAIN, headers = SHEETY_HEADERS)#, auth = (self._user,self._password))
+        sheet_data = response.json()
+        self.destination_data = sheet_data["prices"]
+        pprint(sheet_data)
+        return self.destination_data
+
+    def update_destination_code(self):
+        for city in self.destination_data:
+            new_data = {
+                "price": {
+                    "iataCode": city["iataCode"]
+                }
+            }
+            response = requests.put(
+                url = f"{SHEETY_DOMAIN}/{city['id']}",
+                headers = SHEETY_HEADERS,
+                #auth=(self._user, self._password),
+                json = new_data
+
+            )
+            print(response.text)
